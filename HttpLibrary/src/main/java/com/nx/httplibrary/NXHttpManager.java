@@ -18,6 +18,7 @@ import android.app.Application;
 import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
+import android.widget.Toast;
 
 import com.nx.httplibrary.okhttp.cache.CacheEntity;
 import com.nx.httplibrary.okhttp.cache.CacheMode;
@@ -61,6 +62,14 @@ public class NXHttpManager {
 
     public static NXHttpManager getInstance() {
         return NXHttpHolder.holder;
+    }
+
+    /**
+     * 弹吐丝
+     * @param msg
+     */
+    public void showToastMessage(String msg) {
+        Toast.makeText(context,msg,Toast.LENGTH_LONG).show();
     }
 
     private static class NXHttpHolder {

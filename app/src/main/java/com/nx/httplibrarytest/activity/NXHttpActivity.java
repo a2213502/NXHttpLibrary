@@ -10,12 +10,14 @@ import android.widget.Toast;
 import com.nx.commonlibrary.BaseActivity.BaseActivity;
 import com.nx.commonlibrary.Utils.StringUtil;
 import com.nx.httplibrary.NXHttpManager;
+import com.nx.httplibrary.deprecate.NXResponse;
 import com.nx.httplibrary.okhttp.cache.CacheMode;
 import com.nx.httplibrary.okhttp.callback.JsonCallback;
 import com.nx.httplibrary.okhttp.callback.StringCallback;
 import com.nx.httplibrary.okhttp.model.Response;
 import com.nx.httplibrary.okhttp.request.base.Request;
 import com.nx.httplibrary.okhttp.utils.OkLogger;
+import com.nx.httplibrarytest.AppCallBack;
 import com.nx.httplibrarytest.R;
 import com.nx.httplibrarytest.bean.LoginBean;
 
@@ -114,7 +116,6 @@ public class NXHttpActivity extends BaseActivity {
      */
     private void testCacheJsonBack() {
 
-
         Map<String, String> params = new HashMap<>();
         params.put("token", "");
         params.put("mobile", "18514592015");
@@ -123,43 +124,28 @@ public class NXHttpActivity extends BaseActivity {
         params.put("thirdPartToken", "");
         params.put("type", "");
         //注意javabean须实现 Serializable
-        NXHttpManager.<LoginBean>post("http://app.nt.cn")
+        NXHttpManager.<NXResponse>post("http://app.nt.cn")
                 .params(params)
                 //如果网络请求失败使用缓存数据
                 .cacheMode(CacheMode.REQUEST_FAILED_READ_CACHE)
                 //毫秒
-                .cacheTime(10 * 1000)
+                .cacheTime(-1)
                 .tag(this)
                 //.cacheTime(CacheEntity.CACHE_NEVER_EXPIRE) 永久有效
-                .execute(new JsonCallback<LoginBean>() {
-
-                    @Override
-                    public void onStart(Request<LoginBean, ? extends Request> request) {
-                        super.onStart(request);
-                        OkLogger.d("onStart");
-                    }
+                .execute(new AppCallBack(NXHttpActivity.this) {
 
 
 
                     @Override
-                    public void onSuccess(Response<LoginBean> response) {
+                    public void onSuccess(Response<NXResponse> response) {
 
-                        OkLogger.d("onSuccess:" + response.body().toString());
-                        mTvResult.setText(response.body().toString());
-                        mToken = response.body().getData().getToken();
-                    }
+                        boolean fromCache = response.isFromCache();
 
-                    @Override
-                    public void onError(Response<LoginBean> response) {
-                        OkLogger.d("onError:" + response.getException().toString());
-                        super.onError(response);
-                    }
 
-                    @Override
-                    public void onFinish() {
-                        super.onFinish();
-                        OkLogger.d("onFinish");
+                        NXResponse body = response.body();
 
+                        mToken = body.getString("token");
+                        mTvResult.setText( body.toString());
                     }
                 });
 
@@ -180,7 +166,6 @@ public class NXHttpActivity extends BaseActivity {
                 .params("type", "")
                 .tag(this)
                 .execute(new StringCallback() {
-
                     @Override
                     public void onSuccess(Response<String> response) {
                         OkLogger.d(response.body().toString());
@@ -201,8 +186,7 @@ public class NXHttpActivity extends BaseActivity {
                 .params("password", StringUtil.MD5(StringUtil.MD5("a123456")))
                 .params("route", "user/login")
                 .params("thirdPartToken", "")
-                .params("type", "" )
-
+                .params("type", "")
                 .tag(this)
                 .execute(new JsonCallback<LoginBean>() {
 
@@ -215,13 +199,13 @@ public class NXHttpActivity extends BaseActivity {
                         super.onStart(request);
                     }
 
-                    @Override
-                    public void onCacheSuccess(Response<LoginBean> response) {
-                        OkLogger.d("onCacheSuccess:" + response.body().toString());
-                        mTvResult.setText(response.body().toString());
-
-                        super.onCacheSuccess(response);
-                    }
+//                    @Override
+//                    public void onCacheSuccess(Response<LoginBean> response) {
+//                        OkLogger.d("onCacheSuccess:" + response.body().toString());
+//                        mTvResult.setText(response.body().toString());
+//
+//                        super.onCacheSuccess(response);
+//                    }
 
                     @Override
                     public void onSuccess(Response<LoginBean> response) {

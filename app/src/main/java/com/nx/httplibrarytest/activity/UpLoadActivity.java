@@ -87,13 +87,14 @@ public class UpLoadActivity extends BaseActivity {
         switch (view.getId()) {
 
 
+
             case R.id.bt_download:
                 //下载
 
                 downLoadTest();
 
 
-                break;
+                break ;
             case R.id.iv_pic:
                 //图库选择图片进行上传
                 ImagePicker imagePicker = ImagePicker.getInstance();
@@ -127,34 +128,34 @@ public class UpLoadActivity extends BaseActivity {
     private void downLoadTest() {
 
 
-        NXHttpManager.<File>get("http://test-up.limingjie.top/niutan")
+        NXHttpManager.<File>get("http://test-up.limingjie.top/niutan.apk")
                 .cacheMode(CacheMode.NO_CACHE)
 
-                .execute(new FileCallback("/sdcard/", "niutan.apk") {
-                    @Override
-                    public void onSuccess(Response<File> response) {
-                        tvDownloadState.setText("下载状态：成功");
+                .execute(new FileCallback() {
+            @Override
+            public void onSuccess(Response<File> response) {
+                tvDownloadState.setText("下载状态：成功");
 
-                    }
+            }
 
-                    @Override
-                    public void onError(Response<File> response) {
-                        tvDownloadState.setText("下载状态：失败");
+            @Override
+            public void onError(Response<File> response) {
+                tvDownloadState.setText("下载状态：失败");
 
-                        super.onError(response);
-                    }
+                super.onError(response);
+            }
 
 
-                    @Override
-                    public void downloadProgress(Progress progress) {
+            @Override
+            public void downloadProgress(Progress progress) {
 
-                        tvDownloadState.setText("下载状态：正在下载   " + (progress.currentSize / 1024.0f) + " kb/" + (progress.totalSize / 1024.0f) + " kb");
+                tvDownloadState.setText("下载状态：正在下载   "+(progress.currentSize/1024.0f)+" kb/"+(progress.totalSize/1024.0f)+" kb");
 
-                        seekbarDownload.setMax(100);
-                        seekbarDownload.setProgress((int) (progress.fraction * 100));
-                        super.downloadProgress(progress);
-                    }
-                });
+                seekbarDownload.setMax(100);
+                seekbarDownload.setProgress((int)(progress.fraction*100));
+                super.downloadProgress(progress);
+            }
+        });
 
     }
 
@@ -200,10 +201,11 @@ public class UpLoadActivity extends BaseActivity {
                     public void uploadProgress(Progress progress) {
                         OkLogger.d("progress:" + progress);
                         seekbarUpload.setMax(100);
-                        seekbarUpload.setProgress((int) (progress.fraction * 100));
+                        seekbarUpload.setProgress((int)(progress.fraction*100));
                         tvUploadState.setText("上传状态：上传中");
                         super.uploadProgress(progress);
                     }
+
 
 
                     @Override

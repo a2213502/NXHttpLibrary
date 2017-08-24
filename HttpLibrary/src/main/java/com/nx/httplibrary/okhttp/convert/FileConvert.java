@@ -37,7 +37,7 @@ import okhttp3.ResponseBody;
  */
 public class FileConvert implements Converter<File> {
 
-    public static final String DM_TARGET_FOLDER = File.separator + "download" + File.separator; //下载目标文件夹
+    public static final String DM_TARGET_FOLDER = File.separator + "nx" + File.separator; //下载目标文件夹
 
     private String folder;                  //目标文件存储的文件夹路径
     private String fileName;                //目标文件存储的文件名
@@ -63,7 +63,12 @@ public class FileConvert implements Converter<File> {
     @Override
     public File convertResponse(Response response) throws Throwable {
         String url = response.request().url().toString();
-        if (TextUtils.isEmpty(folder)) folder = Environment.getExternalStorageDirectory() + DM_TARGET_FOLDER;
+        if (TextUtils.isEmpty(folder)) {
+            folder = Environment.getExternalStorageDirectory() + DM_TARGET_FOLDER;
+        }else {
+            //拼接到结尾
+            folder = Environment.getExternalStorageDirectory() + DM_TARGET_FOLDER+folder+File.separator;
+        }
         if (TextUtils.isEmpty(fileName)) fileName = HttpUtils.getNetFileName(response, url);
 
         File dir = new File(folder);

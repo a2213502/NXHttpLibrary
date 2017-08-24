@@ -88,7 +88,7 @@ public class NoneCacheRequestPolicy<T> extends BaseCachePolicy<T> {
                 }
                 if (cacheEntity != null) {
                     Response<T> success = Response.success(true, cacheEntity.getData(), rawCall, null);
-                    mCallback.onCacheSuccess(success);
+                    mCallback.onSuccess(success);
                     mCallback.onFinish();
                     return;
                 }

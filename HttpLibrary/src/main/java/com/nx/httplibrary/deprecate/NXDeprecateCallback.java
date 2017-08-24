@@ -1,8 +1,7 @@
-
-package com.nx.httplibrary.okhttp.callback;
-
+package com.nx.httplibrary.deprecate;
 
 import com.google.gson.Gson;
+import com.nx.httplibrary.okhttp.callback.AbsCallback;
 import com.nx.httplibrary.okhttp.convert.StringConvert;
 
 import java.lang.reflect.ParameterizedType;
@@ -11,24 +10,26 @@ import java.lang.reflect.Type;
 import okhttp3.Response;
 
 /**
- * @类描述： 默认将返回的数据解析成需要的Bean, 可以是 BaseBean，String，List，Map
+ * @类描述： TODO
  * @创建人：王成丞
- * @创建时间：2017/8/8 15:04
+ * @创建时间：2017/8/23 15:14
  */
-public abstract class JsonCallback<T> extends AbsCallback<T> {
+@Deprecated
+public abstract class NXDeprecateCallback<T extends NXResponse> extends AbsCallback<T> {
+
 
     public Type parameterType;
     public Gson mGson;
     private StringConvert convert;
 
-    public JsonCallback() {
+    public NXDeprecateCallback() {
         parameterType = getSuperclassTypeParameter(getClass());
         mGson = new Gson();
         convert = new StringConvert();
     }
 
 
-    private Type getSuperclassTypeParameter(Class<? extends JsonCallback> subclass) {
+    private Type getSuperclassTypeParameter(Class<? extends NXDeprecateCallback> subclass) {
 
 
         Type superclass = subclass.getGenericSuperclass();
@@ -49,20 +50,13 @@ public abstract class JsonCallback<T> extends AbsCallback<T> {
     @Override
     public T convertResponse(Response response) throws Throwable {
 
-
-
         String json = convert.convertResponse(response);
 
 
-        T data = null;
-        if (parameterType == String.class) {
-            data = (T) json;
-        } else {
-            //解析json获取recognizeResult对象
-            data = (T) mGson.fromJson(json, parameterType);
+        T data = (T) NXResponse.createResponse(json);
 
-        }
         return data;
 
     }
+
 }

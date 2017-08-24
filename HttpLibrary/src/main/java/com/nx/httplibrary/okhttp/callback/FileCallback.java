@@ -50,4 +50,9 @@ public abstract class FileCallback extends AbsCallback<File> {
         response.close();
         return file;
     }
+
+    @Override
+    public void onSuccess(com.nx.httplibrary.okhttp.model.Response<File> response) {
+
+    }
 }

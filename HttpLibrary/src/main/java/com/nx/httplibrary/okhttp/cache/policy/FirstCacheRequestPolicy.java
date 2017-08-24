@@ -89,7 +89,7 @@ public class FirstCacheRequestPolicy<T> extends BaseCachePolicy<T> {
                 }
                 if (cacheEntity != null) {
                     Response<T> success = Response.success(true, cacheEntity.getData(), rawCall, null);
-                    mCallback.onCacheSuccess(success);
+                    mCallback.onSuccess(success);
                 }
                 requestNetworkAsync();
             }

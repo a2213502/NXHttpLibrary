@@ -76,7 +76,7 @@ public class DefaultCachePolicy<T> extends BaseCachePolicy<T> {
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    mCallback.onCacheSuccess(success);
+                    mCallback.onSuccess(success);
                     mCallback.onFinish();
                 }
             });

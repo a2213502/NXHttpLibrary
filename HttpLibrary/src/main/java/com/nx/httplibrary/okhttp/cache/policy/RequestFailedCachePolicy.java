@@ -51,7 +51,7 @@ public class RequestFailedCachePolicy<T> extends BaseCachePolicy<T> {
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    mCallback.onCacheSuccess(cacheSuccess);
+                    mCallback.onSuccess(cacheSuccess);
                     mCallback.onFinish();
                 }
             });

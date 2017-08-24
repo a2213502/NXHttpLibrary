@@ -26,5 +26,5 @@ dependencies {
     compile 'com.lzy.widget:imagepicker:0.5.5'
     compile 'com.github.bumptech.glide:glide:3.7.0'
     compile 'com.android.nx:common-library:1.0.9'
-    compile project(':HttpLibrary')
+    compile 'com.android.nx:http-library:1.0.5'
 }

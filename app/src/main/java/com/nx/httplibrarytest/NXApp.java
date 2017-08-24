@@ -18,6 +18,8 @@ public class NXApp extends Application {
         HttpOptions options = new HttpOptions.Builder().setCommonParams("appid", "1")
                 .setCommonParams("phone_system", "1")
                 .setCommonParams("version_code", "v1.2")
+                .setConnectTimeout(15*1000)
+                .setRetryCount(0)
                 .build();
 
 //        HttpOptions aDefault = HttpOptions.createDefault();
