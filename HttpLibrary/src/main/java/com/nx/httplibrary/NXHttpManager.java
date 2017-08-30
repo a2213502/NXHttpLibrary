@@ -26,6 +26,7 @@ import com.nx.httplibrary.okhttp.cookie.CookieJarImpl;
 import com.nx.httplibrary.okhttp.cookie.store.SPCookieStore;
 import com.nx.httplibrary.okhttp.https.HttpsUtils;
 import com.nx.httplibrary.okhttp.interceptor.HttpLoggingInterceptor;
+import com.nx.httplibrary.okhttp.interceptor.TestResponseInterceptor;
 import com.nx.httplibrary.okhttp.model.HttpHeaders;
 import com.nx.httplibrary.okhttp.model.HttpParams;
 import com.nx.httplibrary.okhttp.request.GetRequest;
@@ -66,11 +67,13 @@ public class NXHttpManager {
 
     /**
      * 弹吐丝
+     *
      * @param msg
      */
     public void showToastMessage(String msg) {
-        Toast.makeText(context,msg,Toast.LENGTH_LONG).show();
+        Toast.makeText(context, msg, Toast.LENGTH_LONG).show();
     }
+
 
     private static class NXHttpHolder {
         private static NXHttpManager holder = new NXHttpManager();
@@ -89,7 +92,6 @@ public class NXHttpManager {
     public static <T> PostRequest<T> post(String url) {
         return new PostRequest<>(url);
     }
-
 
 
     /**
@@ -114,12 +116,17 @@ public class NXHttpManager {
             builder.addInterceptor(loggingInterceptor);
         }
 
+        if (options.isNeedResponseTest) {
+            //log相关
+            TestResponseInterceptor testResponseInterceptor = new TestResponseInterceptor(options.responseTestFilePath);
+            builder.addInterceptor(testResponseInterceptor);
+        }
+
 
         setCacheMode(options.cacheMode);
         setCacheTime(options.cacheTime);
         //超时时间设置，默认60秒
         builder.connectTimeout(options.connectTimeout, TimeUnit.MILLISECONDS);   //全局的连接超时时间
-
         //自动管理cookie（或者叫session的保持)
         builder.cookieJar(new CookieJarImpl(new SPCookieStore(app)));            //使用sp保持cookie，如果cookie不过期，则一直有效
         //https相关设置

@@ -1,5 +1,7 @@
 package com.nx.httplibrarytest.bean;
 
+import com.nx.httplibrary.deprecate.BaseBean;
+
 import java.io.Serializable;
 
 /**
@@ -7,7 +9,7 @@ import java.io.Serializable;
  * @创建人：王成丞
  * @创建时间：2017/8/9 17:32
  */
-public class LoginBean implements Serializable{
+public class LoginBean  extends BaseBean implements Serializable{
 
 
     /**code  0 msg  成功
@@ -18,8 +20,7 @@ public class LoginBean implements Serializable{
      */
 
     private DataBean data;
-    private String resCode;
-    private String resMsg;
+
 
     public DataBean getData() {
         return data;

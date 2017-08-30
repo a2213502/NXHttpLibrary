@@ -11,7 +11,6 @@ import com.nx.commonlibrary.BaseActivity.BaseActivity;
 import com.nx.commonlibrary.Utils.StringUtil;
 import com.nx.httplibrary.NXHttpManager;
 import com.nx.httplibrary.deprecate.NXResponse;
-import com.nx.httplibrary.okhttp.cache.CacheMode;
 import com.nx.httplibrary.okhttp.callback.JsonCallback;
 import com.nx.httplibrary.okhttp.callback.StringCallback;
 import com.nx.httplibrary.okhttp.model.Response;
@@ -38,6 +37,7 @@ public class NXHttpActivity extends BaseActivity {
     private TextView mTvResult;
     private String mToken;
     private Button mBtUpload;
+    private Button btTestResponse;
 
     @Override
     public int getLayoutId() {
@@ -50,6 +50,7 @@ public class NXHttpActivity extends BaseActivity {
         mRequestString = (Button) findViewById(R.id.requestString);
         mBtCache = (Button) findViewById(R.id.bt_cache);
         mBtUpload = (Button) findViewById(R.id.bt_upload);
+        btTestResponse = (Button) findViewById(R.id.bt_testresponse);
         mTvResult = (TextView) findViewById(R.id.tv_result);
         mTvResult.setMovementMethod(ScrollingMovementMethod.getInstance());
 
@@ -65,6 +66,7 @@ public class NXHttpActivity extends BaseActivity {
         mRequestJson.setOnClickListener(this);
         mRequestString.setOnClickListener(this);
         mBtCache.setOnClickListener(this);
+        btTestResponse.setOnClickListener(this);
         mBtUpload.setOnClickListener(this);
     }
 
@@ -94,20 +96,25 @@ public class NXHttpActivity extends BaseActivity {
 
                 startActivity(UpLoadActivity.class);
                 break;
+            case R.id.bt_testresponse:
+
+                Intent intent = new Intent(this, TestResponseActivity.class);
+                startActivity(intent);
+                break ;
         }
     }
 
     /**
      * 跳转Acitivity
      *
-     * @param upLoadActivityClass target activity
+     * @param clazz target activity
      */
-    private void startActivity(Class<UpLoadActivity> upLoadActivityClass) {
+    private void startActivity(Class clazz) {
         if (mToken == null) {
             Toast.makeText(this, "先获取图片上传需要的Token", Toast.LENGTH_SHORT).show();
             return;
         }
-        Intent intent = new Intent(this, upLoadActivityClass);
+        Intent intent = new Intent(this, clazz);
         startActivity(intent);
     }
 
@@ -118,22 +125,22 @@ public class NXHttpActivity extends BaseActivity {
 
         Map<String, String> params = new HashMap<>();
         params.put("token", "");
-        params.put("mobile", "18514592015");
+//        params.put("mobile", "18514592015");
         params.put("password", StringUtil.MD5(StringUtil.MD5("a123456")));
         params.put("route", "user/login");
         params.put("thirdPartToken", "");
         params.put("type", "");
         //注意javabean须实现 Serializable
+
         NXHttpManager.<NXResponse>post("http://app.nt.cn")
                 .params(params)
                 //如果网络请求失败使用缓存数据
-                .cacheMode(CacheMode.REQUEST_FAILED_READ_CACHE)
+//                .cacheMode(CacheMode.REQUEST_FAILED_READ_CACHE)
                 //毫秒
-                .cacheTime(-1)
-                .tag(this)
+//                .cacheTime(-1)
+                .tag("testCacheJsonBack")
                 //.cacheTime(CacheEntity.CACHE_NEVER_EXPIRE) 永久有效
                 .execute(new AppCallBack(NXHttpActivity.this) {
-
 
 
                     @Override
@@ -145,7 +152,7 @@ public class NXHttpActivity extends BaseActivity {
                         NXResponse body = response.body();
 
                         mToken = body.getString("token");
-                        mTvResult.setText( body.toString());
+                        mTvResult.setText(body.toString());
                     }
                 });
 

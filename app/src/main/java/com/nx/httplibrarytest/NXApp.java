@@ -4,6 +4,7 @@ import android.app.Application;
 
 import com.nx.httplibrary.HttpOptions;
 import com.nx.httplibrary.NXHttpManager;
+import com.nx.httplibrary.okhttp.cache.CacheMode;
 
 /**
  * @类描述： TODO
@@ -18,8 +19,10 @@ public class NXApp extends Application {
         HttpOptions options = new HttpOptions.Builder().setCommonParams("appid", "1")
                 .setCommonParams("phone_system", "1")
                 .setCommonParams("version_code", "v1.2")
-                .setConnectTimeout(15*1000)
+                .setConnectTimeout(1000)
                 .setRetryCount(0)
+                .setCacheMode(CacheMode.NO_CACHE)
+                .setNeedResponseTest(true)
                 .build();
 
 //        HttpOptions aDefault = HttpOptions.createDefault();

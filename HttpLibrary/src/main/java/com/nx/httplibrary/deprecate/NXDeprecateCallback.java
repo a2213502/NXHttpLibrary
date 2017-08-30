@@ -14,11 +14,11 @@ import okhttp3.Response;
  * @创建人：王成丞
  * @创建时间：2017/8/23 15:14
  */
-@Deprecated
-public abstract class NXDeprecateCallback<T extends NXResponse> extends AbsCallback<T> {
+
+public abstract class NXDeprecateCallback<T> extends AbsCallback<T> {
 
 
-    public Type parameterType;
+    public Class parameterType;
     public Gson mGson;
     private StringConvert convert;
 
@@ -29,7 +29,7 @@ public abstract class NXDeprecateCallback<T extends NXResponse> extends AbsCallb
     }
 
 
-    private Type getSuperclassTypeParameter(Class<? extends NXDeprecateCallback> subclass) {
+    private Class getSuperclassTypeParameter(Class<? extends NXDeprecateCallback> subclass) {
 
 
         Type superclass = subclass.getGenericSuperclass();
@@ -39,7 +39,7 @@ public abstract class NXDeprecateCallback<T extends NXResponse> extends AbsCallb
         //ParameterizedType参数化类型，即泛型
         ParameterizedType p = (ParameterizedType) superclass;
         //获取参数化类型的数组，泛型可能有多个
-        return p.getActualTypeArguments()[0];
+        return (Class) p.getActualTypeArguments()[0];
     }
 
     /**
@@ -51,9 +51,16 @@ public abstract class NXDeprecateCallback<T extends NXResponse> extends AbsCallb
     public T convertResponse(Response response) throws Throwable {
 
         String json = convert.convertResponse(response);
+        T data = null;
+        //是否是NXResPonse的子类
 
+        if (parameterType== NXResponse.class) {
+            data = (T) NXResponse.createResponse(json);
 
-        T data = (T) NXResponse.createResponse(json);
+        } else if (parameterType.getSuperclass()==BaseBean.class) {
+            //解析json获取recognizeResult对象
+            data = (T) mGson.fromJson(json, parameterType);
+        }
 
         return data;
 

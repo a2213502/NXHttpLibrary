@@ -17,6 +17,13 @@ public class HttpOptions {
     //是否打印请求log
     public boolean isNeedLog;
 
+    //是否使用假数据
+    public boolean isNeedResponseTest;
+
+    //假数据路径
+    public String responseTestFilePath;
+
+
     //请求超时时间
     public long connectTimeout;
     //请求重试次数 默认为三次，那么最差的情况会请求4次(一次原始请求，三次重连请求)，不需要可以设置为0
@@ -34,6 +41,7 @@ public class HttpOptions {
         return new Builder().build();
     }
 
+
     private HttpOptions() {
 
     }
@@ -41,6 +49,8 @@ public class HttpOptions {
     private HttpOptions(final Builder builder) {
         commonHeaders = builder.commonHeaders;
         isNeedLog = builder.isNeedLog;
+        isNeedResponseTest = builder.isNeedResponseTest;
+        responseTestFilePath = builder.responseTestFilePath;
         connectTimeout = builder.connectTimeout;
         retryCount = builder.retryCount;
         commonParams = builder.commonParams;
@@ -54,6 +64,10 @@ public class HttpOptions {
         private HttpHeaders commonHeaders = new HttpHeaders();
         //是否打印请求log
         private boolean isNeedLog = true;
+        //是否使用假数据
+        private boolean isNeedResponseTest = false;
+        //假数据存放路径
+        private String responseTestFilePath = "/sdcard/response.txt";
 
         //请求超时时间 单位：毫秒
         private long connectTimeout = 60000;
@@ -82,6 +96,12 @@ public class HttpOptions {
 
         }
 
+        public Builder setResponseTestFilePath(String responseTestFilePath) {
+            this.responseTestFilePath = responseTestFilePath;
+            return this;
+
+        }
+
         public Builder setCommonHeaders(String headerKey, String headerValue) {
             commonHeaders.put(headerKey, headerValue);
             return this;
@@ -94,7 +114,14 @@ public class HttpOptions {
         }
 
         public Builder setNeedLog(boolean needLog) {
-            isNeedLog = needLog;
+            this.isNeedLog = needLog;
+            return this;
+
+        }
+
+
+        public Builder setNeedResponseTest(boolean isNeedResponseTest) {
+            this.isNeedResponseTest = isNeedResponseTest;
             return this;
 
         }
