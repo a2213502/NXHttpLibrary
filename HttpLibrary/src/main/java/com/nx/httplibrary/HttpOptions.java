@@ -21,7 +21,7 @@ public class HttpOptions {
     public boolean isNeedResponseTest;
 
     //假数据路径
-    public String responseTestFilePath;
+    public String responseTestAssetFileName;
 
 
     //请求超时时间
@@ -50,7 +50,7 @@ public class HttpOptions {
         commonHeaders = builder.commonHeaders;
         isNeedLog = builder.isNeedLog;
         isNeedResponseTest = builder.isNeedResponseTest;
-        responseTestFilePath = builder.responseTestFilePath;
+        responseTestAssetFileName = builder.responseTestAssetFileName;
         connectTimeout = builder.connectTimeout;
         retryCount = builder.retryCount;
         commonParams = builder.commonParams;
@@ -67,7 +67,7 @@ public class HttpOptions {
         //是否使用假数据
         private boolean isNeedResponseTest = false;
         //假数据存放路径
-        private String responseTestFilePath = "/sdcard/response.txt";
+        private String responseTestAssetFileName = "response.txt";
 
         //请求超时时间 单位：毫秒
         private long connectTimeout = 60000;
@@ -96,8 +96,8 @@ public class HttpOptions {
 
         }
 
-        public Builder setResponseTestFilePath(String responseTestFilePath) {
-            this.responseTestFilePath = responseTestFilePath;
+        public Builder setResponseTestAssetFileName(String responseTestAssetFileName) {
+            this.responseTestAssetFileName = responseTestAssetFileName;
             return this;
 
         }

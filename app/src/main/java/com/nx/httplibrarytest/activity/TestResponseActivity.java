@@ -1,5 +1,7 @@
 package com.nx.httplibrarytest.activity;
 
+import android.os.Environment;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -8,13 +10,12 @@ import com.google.gson.Gson;
 import com.nx.commonlibrary.BaseActivity.BaseActivity;
 import com.nx.commonlibrary.Utils.StringUtil;
 import com.nx.httplibrary.NXHttpManager;
-import com.nx.httplibrary.deprecate.NXDeprecateCallback;
 import com.nx.httplibrary.deprecate.NXResponse;
 import com.nx.httplibrary.okhttp.model.Response;
 import com.nx.httplibrary.okhttp.utils.FileUtil;
+import com.nx.httplibrarytest.AppCallBack;
 import com.nx.httplibrarytest.R;
 
-import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -92,9 +93,9 @@ public class TestResponseActivity extends BaseActivity {
 
         NXHttpManager.<NXResponse>post("http://app.nt.cn")
                 .params(params)
-                .tag("testCacheJsonBack")
+                .tag("home.index")
                 //.cacheTime(CacheEntity.CACHE_NEVER_EXPIRE) 永久有效
-                .execute(new NXDeprecateCallback<NXResponse>() {
+                .execute(new AppCallBack<NXResponse>(this) {
 
                     @Override
                     public void onSuccess(Response<NXResponse> response) {
@@ -109,6 +110,8 @@ public class TestResponseActivity extends BaseActivity {
                     }
                 });
 
+
+
     }
 
     private void testSave() {
@@ -117,22 +120,23 @@ public class TestResponseActivity extends BaseActivity {
         //准备数据存储到文件
         Map<String, String> datas = new HashMap<>();
 
-        datas.put("http://ncffront.limingjie.top/index.php", "{ \"data\" : {\"activityInfo\":{\"activityID\":\"xxxx\",\"bannerUrl\":\"xxxxx\",\"activityRuleUrl\":\"xxxxx\",\"activityState\":0,\"time\":\"2017.10.27-2017-11.05\",\"title\":\"xxxxx\",\"content\":\"xxxx\"},\"voteInfo\":{\"winer\":\"1\",\"prosNumbers\":\"1600\",\"consNumbers\":\"400\",\"prosPercentage\":\"80%\",\"consPercentage\":\"20%\",\"prosPoint\":\"xxxxx\",\"consPoint\":\"xxxx\"},\"totalScore\":\"100\"},\n" +
+        datas.put("home.index", "{ \"data\" : {\"activityInfo\":{\"activityID\":\"1234\",\"bannerUrl\":\"xxxxx\",\"activityRuleUrl\":\"xxxxx\",\"activityState\":0,\"time\":\"2017.8.10-2017-8.05\",\"title\":\"歌名：消愁 歌名：消愁 歌名：消愁 歌名：消愁 歌名：消愁 歌名：消愁 歌名：消愁 歌名：消愁 歌名：消愁 歌名：消愁 歌名：消愁 歌名：消愁 \",\"content\":\"当你走进这欢乐场，背上所有的梦与想，各色的脸上各色的妆，没人记得你的模样，三巡酒过你在角落，固执的，唱着苦涩的歌，听他在喧嚣里被淹没，你拿起酒杯对自己说，一杯敬朝阳，一杯敬月光，唤醒我的向往，温柔了寒窗，于是可以不回头的逆风飞翔，不怕心头有雨，眼底有霜，一杯敬故乡，一杯敬远方，守着，的善良，催着我成长，所以南北的路从此不再漫长，灵魂不再无处安放，一杯敬明天，一杯敬过往，支撑我的身体，厚重了肩膀，虽然从不相信所谓山高水长，人生苦短何必念念不忘，一杯敬自由，一杯敬死亡，宽恕我的平凡，驱散了迷惘，好吧天亮之后总是潦草离场，清醒的人最荒唐，好吧天亮之后总是潦草离场，清醒的人最荒唐\"},\"voteInfo\":{\"winer\":\"0\",\"prosNumbers\":\"1600\",\"consNumbers\":\"400\",\"prosPercentage\":\"80%\",\"consPercentage\":\"20%\",\"prosPoint\":\"一杯敬自由,一杯敬死亡！！！\",\"consPoint\":\"反方认为：不喝酒\"},\"totalScore\":\"1000\"},\n" +
                 "     \"resCode\":\"0000\",\n" +
                 "     \"resMsg\":\"成功\"\n" +
                 "}");
 
-        datas.put("testCacheJsonBack", "{\"data\":{\"username\":\"xxxxxxx\",\"header_img\":\"\",\"nick_name\":\"xxxxxx\",\"token\":\"xxxxxxxx\",\"user_name\":\"185****2015\",\"isselecttopic\":\"1\"},\"resCode\":\"0000\",\"resMsg\":\"成功\"}");
 
         Gson gson = new Gson();
         String jsonData = gson.toJson(datas);
 
+        Log.d(TAG, "testSave: "+Environment.getExternalStorageDirectory().getAbsolutePath() +"/response.txt");
         try {
-            FileUtil.writeTxtFile(jsonData, new File("/sdcard/response.txt"));
+            FileUtil.writeTxtToFile(jsonData, Environment.getExternalStorageDirectory().getAbsolutePath()+"/","response.txt");
+
         } catch (Exception e) {
             e.printStackTrace();
             mTvState.setText("结果：写入失败：" + e.toString());
-
+            return ;
         }
 
         mTvState.setText("结果：写入完成");

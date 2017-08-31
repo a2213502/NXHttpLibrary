@@ -118,7 +118,7 @@ public class NXHttpManager {
 
         if (options.isNeedResponseTest) {
             //log相关
-            TestResponseInterceptor testResponseInterceptor = new TestResponseInterceptor(options.responseTestFilePath);
+            TestResponseInterceptor testResponseInterceptor = new TestResponseInterceptor(options.responseTestAssetFileName);
             builder.addInterceptor(testResponseInterceptor);
         }
 

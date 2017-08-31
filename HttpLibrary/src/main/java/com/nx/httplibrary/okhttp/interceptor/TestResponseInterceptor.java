@@ -2,9 +2,9 @@ package com.nx.httplibrary.okhttp.interceptor;
 
 import com.google.gson.Gson;
 import com.nx.commonlibrary.Utils.LogUtil;
+import com.nx.httplibrary.NXHttpManager;
 import com.nx.httplibrary.okhttp.utils.FileUtil;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.Map;
 
@@ -22,14 +22,18 @@ public class TestResponseInterceptor implements Interceptor {
 
 
     private static final String TAG = "TestResponseInterceptor";
-    private String filePath;
     private Map map = null;
 
-    public TestResponseInterceptor(String filePath) {
-        this.filePath = filePath;
+    public TestResponseInterceptor(String fileName) {
 
+        if (fileName == null || "".equals(fileName)) {
+            return ;
+        }
         try {
-            String test = FileUtil.readTxtFile(new File(filePath));
+            String test = FileUtil.readFromAssets(NXHttpManager.getInstance().getContext(),fileName);
+            if (test == null || "".equals(test)) {
+                return ;
+            }
             Gson gson = new Gson();
             map = gson.fromJson(test, Map.class);
 
@@ -54,7 +58,7 @@ public class TestResponseInterceptor implements Interceptor {
             LogUtil.d("tag", tag);
             if (map != null && map.containsKey(tag)) {
                 String responseJson = (String) map.get(tag);
-                return response.newBuilder().body(ResponseBody.create(null, responseJson)).build();
+                return response.newBuilder().code(200).body(ResponseBody.create(null, responseJson)).build();
 
             }
         } catch (Exception e) {

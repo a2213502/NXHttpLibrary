@@ -140,7 +140,7 @@ public class NXHttpActivity extends BaseActivity {
 //                .cacheTime(-1)
                 .tag("testCacheJsonBack")
                 //.cacheTime(CacheEntity.CACHE_NEVER_EXPIRE) 永久有效
-                .execute(new AppCallBack(NXHttpActivity.this) {
+                .execute(new AppCallBack<NXResponse>(NXHttpActivity.this) {
 
 
                     @Override

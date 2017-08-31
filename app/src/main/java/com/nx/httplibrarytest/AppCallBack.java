@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.app.AlertDialog;
 
 import com.nx.httplibrary.deprecate.NXDeprecateCallback;
-import com.nx.httplibrary.deprecate.NXResponse;
 import com.nx.httplibrary.okhttp.request.base.Request;
 
 /**
@@ -12,12 +11,11 @@ import com.nx.httplibrary.okhttp.request.base.Request;
  * @创建人：王成丞
  * @创建时间：2017/8/23 10:41
  */
-public abstract class AppCallBack extends NXDeprecateCallback<NXResponse> {
+public abstract class AppCallBack<T> extends NXDeprecateCallback<T> {
 
 
     private AlertDialog dialog;
     private Activity activity;
-
 
 
     public AppCallBack(Activity activity) {
@@ -33,7 +31,6 @@ public abstract class AppCallBack extends NXDeprecateCallback<NXResponse> {
 
         super.onStart(request);
     }
-
 
 
     @Override
