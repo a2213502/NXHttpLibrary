@@ -139,7 +139,7 @@ public class FileUtil {
                 file.createNewFile();
             }
             RandomAccessFile raf = new RandomAccessFile(file, "rwd");
-            raf.seek(file.length());
+//            raf.seek(file.length());
             raf.write(strContent.getBytes());
             raf.close();
         } catch (Exception e) {

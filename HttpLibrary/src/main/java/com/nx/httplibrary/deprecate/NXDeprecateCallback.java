@@ -57,7 +57,7 @@ public abstract class NXDeprecateCallback<T> extends AbsCallback<T> {
         if (parameterType== NXResponse.class) {
             data = (T) NXResponse.createResponse(json);
 
-        } else if (parameterType.getSuperclass()==BaseBean.class) {
+        } else if (parameterType.getSuperclass()==BaseBean.class||parameterType==BaseBean.class) {
             //解析json获取recognizeResult对象
             data = (T) mGson.fromJson(json, parameterType);
         }
