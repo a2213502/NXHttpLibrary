@@ -14,7 +14,7 @@ import okhttp3.Response;
  * @创建人：王成丞
  * @创建时间：2017/8/23 15:14
  */
-
+@Deprecated
 public abstract class NXDeprecateCallback<T> extends AbsCallback<T> {
 
 
@@ -54,10 +54,10 @@ public abstract class NXDeprecateCallback<T> extends AbsCallback<T> {
         T data = null;
         //是否是NXResPonse的子类
 
-        if (parameterType== NXResponse.class) {
+        if (parameterType == NXResponse.class) {
             data = (T) NXResponse.createResponse(json);
 
-        } else if (parameterType.getSuperclass()==BaseBean.class||parameterType==BaseBean.class) {
+        } else if (parameterType.getSuperclass() == BaseBean.class || parameterType == BaseBean.class) {
             //解析json获取recognizeResult对象
             data = (T) mGson.fromJson(json, parameterType);
         }

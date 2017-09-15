@@ -15,9 +15,7 @@
  */
 package com.nx.httplibrary.okhttp.model;
 
-import okhttp3.Call;
-import okhttp3.Headers;
-
+import com.nx.httplibrary.okhttp.exception.HttpException;
 
 /**
  * @类描述： 响应体的包装类
@@ -27,49 +25,29 @@ import okhttp3.Headers;
 public final class Response<T> {
 
     private T body;
-    private Throwable throwable;
+    private HttpException exception;
     private boolean isFromCache;
-    private Call rawCall;
-    private okhttp3.Response rawResponse;
 
-    public static <T> Response<T> success(boolean isFromCache, T body, Call rawCall, okhttp3.Response rawResponse) {
+    public static <T> Response<T> success(boolean isFromCache, T body) {
         Response<T> response = new Response<>();
         response.setFromCache(isFromCache);
         response.setBody(body);
-        response.setRawCall(rawCall);
-        response.setRawResponse(rawResponse);
         return response;
     }
 
-    public static <T> Response<T> error(boolean isFromCache, Call rawCall, okhttp3.Response rawResponse, Throwable throwable) {
+    public static <T> Response<T> error(boolean isFromCache, HttpException exception) {
         Response<T> response = new Response<>();
         response.setFromCache(isFromCache);
-        response.setRawCall(rawCall);
-        response.setRawResponse(rawResponse);
-        response.setException(throwable);
+        response.setException(exception);
         return response;
     }
 
     public Response() {
     }
 
-    public int code() {
-        if (rawResponse == null) return -1;
-        return rawResponse.code();
-    }
-
-    public String message() {
-        if (rawResponse == null) return null;
-        return rawResponse.message();
-    }
-
-    public Headers headers() {
-        if (rawResponse == null) return null;
-        return rawResponse.headers();
-    }
 
     public boolean isSuccessful() {
-        return throwable == null;
+        return exception == null;
     }
 
     public void setBody(T body) {
@@ -80,29 +58,14 @@ public final class Response<T> {
         return body;
     }
 
-    public Throwable getException() {
-        return throwable;
+    public HttpException getException() {
+        return exception;
     }
 
-    public void setException(Throwable exception) {
-        this.throwable = exception;
+    public void setException(HttpException exception) {
+        this.exception = exception;
     }
 
-    public Call getRawCall() {
-        return rawCall;
-    }
-
-    public void setRawCall(Call rawCall) {
-        this.rawCall = rawCall;
-    }
-
-    public okhttp3.Response getRawResponse() {
-        return rawResponse;
-    }
-
-    public void setRawResponse(okhttp3.Response rawResponse) {
-        this.rawResponse = rawResponse;
-    }
 
     public boolean isFromCache() {
         return isFromCache;

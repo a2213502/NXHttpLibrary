@@ -86,7 +86,7 @@ public abstract class BaseCachePolicy<T> implements CachePolicy<T> {
 
     @Override
     public synchronized Call prepareRawCall() throws Throwable {
-        if (executed) throw HttpException.COMMON("Already executed!");
+        if (executed) throw new RuntimeException("Already executed!");
         executed = true;
         rawCall = request.getRawCall();
         if (canceled) rawCall.cancel();
@@ -99,14 +99,20 @@ public abstract class BaseCachePolicy<T> implements CachePolicy<T> {
             int responseCode = response.code();
 
             //network error
-            if (responseCode == 404 || responseCode >= 500) {
-                return Response.error(false, rawCall, response, HttpException.NET_ERROR());
+            if (responseCode == 404) {
+                return Response.error(false, HttpException.RESPONSE_CODE_404());
+            } else if (responseCode >= 500) {
+                return Response.error(false, HttpException.RESPONSE_CODE_500());
             }
 
             T body = request.getConverter().convertResponse(response);
             //save cache when request is successful
+
+            if (body == null) {
+                return Response.error(false, HttpException.BODY_NULL_ERROR());
+            }
             saveCache(response.headers(), body);
-            return Response.success(false, body, rawCall, response);
+            return Response.success(false, body);
         } catch (Throwable throwable) {
             if (throwable instanceof SocketTimeoutException && currentRetryCount < request.getRetryCount()) {
                 currentRetryCount++;
@@ -117,7 +123,7 @@ public abstract class BaseCachePolicy<T> implements CachePolicy<T> {
                     requestNetworkSync();
                 }
             }
-            return Response.error(false, rawCall, null, throwable);
+            return Response.error(false, HttpException.OTHER_ERROR(throwable));
         }
     }
 
@@ -136,7 +142,7 @@ public abstract class BaseCachePolicy<T> implements CachePolicy<T> {
                     }
                 } else {
                     if (!call.isCanceled()) {
-                        Response<T> error = Response.error(false, call, null, e);
+                        Response<T> error = Response.error(false, HttpException.OTHER_ERROR(e));
                         onError(error);
                     }
                 }
@@ -147,8 +153,12 @@ public abstract class BaseCachePolicy<T> implements CachePolicy<T> {
                 int responseCode = response.code();
 
                 //network error
-                if (responseCode == 404 || responseCode >= 500) {
-                    Response<T> error = Response.error(false, call, response, HttpException.NET_ERROR());
+                if (responseCode == 404) {
+                    Response<T> error = Response.error(false, HttpException.RESPONSE_CODE_404());
+                    onError(error);
+                    return;
+                } else if (responseCode >= 500) {
+                    Response<T> error = Response.error(false, HttpException.RESPONSE_CODE_500());
                     onError(error);
                     return;
                 }
@@ -157,12 +167,18 @@ public abstract class BaseCachePolicy<T> implements CachePolicy<T> {
 
                 try {
                     T body = request.getConverter().convertResponse(response);
+
+                    if (body == null) {
+                        Response<T> error = Response.error(false, HttpException.BODY_NULL_ERROR());
+                        onError(error);
+                        return;
+                    }
                     //save cache when request is successful
                     saveCache(response.headers(), body);
-                    Response<T> success = Response.success(false, body, call, response);
+                    Response<T> success = Response.success(false, body);
                     onSuccess(success);
                 } catch (Throwable throwable) {
-                    Response<T> error = Response.error(false, call, response, throwable);
+                    Response<T> error = Response.error(false, HttpException.OTHER_ERROR(throwable));
                     onError(error);
                 }
             }

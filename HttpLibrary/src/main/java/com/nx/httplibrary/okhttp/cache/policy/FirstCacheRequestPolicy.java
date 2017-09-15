@@ -18,6 +18,7 @@ package com.nx.httplibrary.okhttp.cache.policy;
 
 import com.nx.httplibrary.okhttp.cache.CacheEntity;
 import com.nx.httplibrary.okhttp.callback.Callback;
+import com.nx.httplibrary.okhttp.exception.HttpException;
 import com.nx.httplibrary.okhttp.model.Response;
 import com.nx.httplibrary.okhttp.request.base.Request;
 
@@ -58,16 +59,16 @@ public class FirstCacheRequestPolicy<T> extends BaseCachePolicy<T> {
         try {
             prepareRawCall();
         } catch (Throwable throwable) {
-            return Response.error(false, rawCall, null, throwable);
+            return Response.error(false, HttpException.OTHER_ERROR(throwable));
         }
         //同步请求，不能返回两次，只返回正确的数据
         Response<T> response;
         if (cacheEntity != null) {
-            response = Response.success(true, cacheEntity.getData(), rawCall, null);
+            response = Response.success(true, cacheEntity.getData());
         }
         response = requestNetworkSync();
         if (!response.isSuccessful() && cacheEntity != null) {
-            response = Response.success(true, cacheEntity.getData(), rawCall, response.getRawResponse());
+            response = Response.success(true, cacheEntity.getData());
         }
         return response;
     }
@@ -83,12 +84,13 @@ public class FirstCacheRequestPolicy<T> extends BaseCachePolicy<T> {
                 try {
                     prepareRawCall();
                 } catch (Throwable throwable) {
-                    Response<T> error = Response.error(false, rawCall, null, throwable);
+
+                    Response<T> error = Response.error(false, HttpException.OTHER_ERROR(throwable));
                     mCallback.onError(error);
                     return;
                 }
                 if (cacheEntity != null) {
-                    Response<T> success = Response.success(true, cacheEntity.getData(), rawCall, null);
+                    Response<T> success = Response.success(true, cacheEntity.getData());
                     mCallback.onSuccess(success);
                 }
                 requestNetworkAsync();

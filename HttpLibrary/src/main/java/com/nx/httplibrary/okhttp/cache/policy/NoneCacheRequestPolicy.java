@@ -18,6 +18,7 @@ package com.nx.httplibrary.okhttp.cache.policy;
 
 import com.nx.httplibrary.okhttp.cache.CacheEntity;
 import com.nx.httplibrary.okhttp.callback.Callback;
+import com.nx.httplibrary.okhttp.exception.HttpException;
 import com.nx.httplibrary.okhttp.model.Response;
 import com.nx.httplibrary.okhttp.request.base.Request;
 
@@ -59,11 +60,11 @@ public class NoneCacheRequestPolicy<T> extends BaseCachePolicy<T> {
         try {
             prepareRawCall();
         } catch (Throwable throwable) {
-            return Response.error(false, rawCall, null, throwable);
+            return Response.error(false, HttpException.OTHER_ERROR(throwable));
         }
         Response<T> response = null;
         if (cacheEntity != null) {
-            response = Response.success(true, cacheEntity.getData(), rawCall, null);
+            response = Response.success(true, cacheEntity.getData());
         }
         if (response == null) {
             response = requestNetworkSync();
@@ -82,12 +83,12 @@ public class NoneCacheRequestPolicy<T> extends BaseCachePolicy<T> {
                 try {
                     prepareRawCall();
                 } catch (Throwable throwable) {
-                    Response<T> error = Response.error(false, rawCall, null, throwable);
+                    Response<T> error = Response.error(false, HttpException.OTHER_ERROR(throwable));
                     mCallback.onError(error);
                     return;
                 }
                 if (cacheEntity != null) {
-                    Response<T> success = Response.success(true, cacheEntity.getData(), rawCall, null);
+                    Response<T> success = Response.success(true, cacheEntity.getData());
                     mCallback.onSuccess(success);
                     mCallback.onFinish();
                     return;

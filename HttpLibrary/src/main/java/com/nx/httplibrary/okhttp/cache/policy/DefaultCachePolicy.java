@@ -18,11 +18,13 @@ package com.nx.httplibrary.okhttp.cache.policy;
 
 import com.nx.httplibrary.okhttp.cache.CacheEntity;
 import com.nx.httplibrary.okhttp.callback.Callback;
-import com.nx.httplibrary.okhttp.exception.CacheException;
+import com.nx.httplibrary.okhttp.exception.HttpException;
 import com.nx.httplibrary.okhttp.model.Response;
 import com.nx.httplibrary.okhttp.request.base.Request;
 
 import okhttp3.Call;
+
+import static com.nx.httplibrary.okhttp.model.Response.error;
 
 
 /**
@@ -63,7 +65,7 @@ public class DefaultCachePolicy<T> extends BaseCachePolicy<T> {
         if (response.code() != 304) return false;
 
         if (cacheEntity == null) {
-            final Response<T> error = Response.error(true, call, response, CacheException.NON_AND_304(request.getCacheKey()));
+            final Response<T> error = error(true, HttpException.CACHE_NULL_ERROR());
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
@@ -72,7 +74,7 @@ public class DefaultCachePolicy<T> extends BaseCachePolicy<T> {
                 }
             });
         } else {
-            final Response<T> success = Response.success(true, cacheEntity.getData(), call, response);
+            final Response<T> success = Response.success(true, cacheEntity.getData());
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
@@ -89,15 +91,15 @@ public class DefaultCachePolicy<T> extends BaseCachePolicy<T> {
         try {
             prepareRawCall();
         } catch (Throwable throwable) {
-            return Response.error(false, rawCall, null, throwable);
+            return Response.error(false, HttpException.OTHER_ERROR(throwable));
         }
         Response<T> response = requestNetworkSync();
         //HTTP cache protocol
-        if (response.isSuccessful() && response.code() == 304) {
+        if (response.isSuccessful()) {
             if (cacheEntity == null) {
-                response = Response.error(true, rawCall, response.getRawResponse(), CacheException.NON_AND_304(request.getCacheKey()));
+                response = error(true, HttpException.CACHE_NULL_ERROR());
             } else {
-                response = Response.success(true, cacheEntity.getData(), rawCall, response.getRawResponse());
+                response = Response.success(true, cacheEntity.getData());
             }
         }
         return response;
@@ -114,7 +116,7 @@ public class DefaultCachePolicy<T> extends BaseCachePolicy<T> {
                 try {
                     prepareRawCall();
                 } catch (Throwable throwable) {
-                    Response<T> error = Response.error(false, rawCall, null, throwable);
+                    Response<T> error = Response.error(false, HttpException.OTHER_ERROR(throwable));
                     mCallback.onError(error);
                     return;
                 }

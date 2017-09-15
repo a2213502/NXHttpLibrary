@@ -17,6 +17,7 @@ package com.nx.httplibrary.okhttp.callback;
 
 
 import com.nx.httplibrary.NXHttpManager;
+import com.nx.httplibrary.okhttp.exception.HttpException;
 import com.nx.httplibrary.okhttp.model.Progress;
 import com.nx.httplibrary.okhttp.model.Response;
 import com.nx.httplibrary.okhttp.request.base.Request;
@@ -42,25 +43,33 @@ public abstract class AbsCallback<T> implements Callback<T> {
 
     @Override
     public void onError(Response<T> response) {
-//        OkLogger.printStackTrace(response.getException());
-        int responseCode = response.code();
-        Throwable throwable = response.getException();
-        //network error
-        if (responseCode == 0) {
-            showToastMessage("手机网络不可用!");
-        } else if (responseCode == 404) {
-            showToastMessage("没有找到服务!");
-        } else if (responseCode >= 500) {
-            showToastMessage("服务器出现错误!" );
-        } else if (throwable instanceof ConnectException) {
-            showToastMessage("网络连不上服务器!" );
-        } else if (throwable instanceof SocketTimeoutException) {
-            showToastMessage("网速不给力,超时了,刷新试试!");
-        } else if (throwable instanceof UnknownHostException) {
-            showToastMessage("手机网络不可用!");
+        HttpException exception = response.getException();
+
+
+        switch (exception.getErrorType()) {
+            case OTHER_ERROR:
+                Throwable throwable = exception.getThrowable();
+                if (throwable instanceof ConnectException) {
+                    showToastMessage("网络连不上服务器!");
+                } else if (throwable instanceof SocketTimeoutException) {
+                    showToastMessage("网速不给力,超时了,刷新试试!");
+                } else if (throwable instanceof UnknownHostException) {
+                    showToastMessage("手机网络不可用!");
+                }
+
+                break;
+
+            default:
+                showToastMessage(exception.getMessage());
+                break;
 
         }
 
+    }
+
+
+    public void showToastMessage(String msg) {
+        NXHttpManager.getInstance().showToastMessage(msg);
     }
 
     @Override
@@ -77,7 +86,4 @@ public abstract class AbsCallback<T> implements Callback<T> {
     }
 
 
-    public void showToastMessage(String msg) {
-        NXHttpManager.getInstance().showToastMessage(msg);
-    }
 }

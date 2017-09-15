@@ -18,6 +18,7 @@ package com.nx.httplibrary.okhttp.cache.policy;
 
 import com.nx.httplibrary.okhttp.cache.CacheEntity;
 import com.nx.httplibrary.okhttp.callback.Callback;
+import com.nx.httplibrary.okhttp.exception.HttpException;
 import com.nx.httplibrary.okhttp.model.Response;
 import com.nx.httplibrary.okhttp.request.base.Request;
 
@@ -47,7 +48,7 @@ public class RequestFailedCachePolicy<T> extends BaseCachePolicy<T> {
     public void onError(final Response<T> error) {
 
         if (cacheEntity != null) {
-            final Response<T> cacheSuccess = Response.success(true, cacheEntity.getData(), error.getRawCall(), error.getRawResponse());
+            final Response<T> cacheSuccess = Response.success(true, cacheEntity.getData());
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
@@ -71,11 +72,11 @@ public class RequestFailedCachePolicy<T> extends BaseCachePolicy<T> {
         try {
             prepareRawCall();
         } catch (Throwable throwable) {
-            return Response.error(false, rawCall, null, throwable);
+            return Response.error(false, HttpException.OTHER_ERROR(throwable));
         }
         Response<T> response = requestNetworkSync();
         if (!response.isSuccessful() && cacheEntity != null) {
-            response = Response.success(true, cacheEntity.getData(), rawCall, response.getRawResponse());
+            response = Response.success(true, cacheEntity.getData());
         }
         return response;
     }
@@ -91,7 +92,7 @@ public class RequestFailedCachePolicy<T> extends BaseCachePolicy<T> {
                 try {
                     prepareRawCall();
                 } catch (Throwable throwable) {
-                    Response<T> error = Response.error(false, rawCall, null, throwable);
+                    Response<T> error = Response.error(false, HttpException.OTHER_ERROR(throwable));
                     mCallback.onError(error);
                     return;
                 }

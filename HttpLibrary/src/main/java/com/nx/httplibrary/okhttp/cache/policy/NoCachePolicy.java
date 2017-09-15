@@ -18,6 +18,7 @@ package com.nx.httplibrary.okhttp.cache.policy;
 
 import com.nx.httplibrary.okhttp.cache.CacheEntity;
 import com.nx.httplibrary.okhttp.callback.Callback;
+import com.nx.httplibrary.okhttp.exception.HttpException;
 import com.nx.httplibrary.okhttp.model.Response;
 import com.nx.httplibrary.okhttp.request.base.Request;
 
@@ -59,7 +60,7 @@ public class NoCachePolicy<T> extends BaseCachePolicy<T> {
         try {
             prepareRawCall();
         } catch (Throwable throwable) {
-            return Response.error(false, rawCall, null, throwable);
+            return Response.error(false, HttpException.OTHER_ERROR(throwable));
         }
         return requestNetworkSync();
     }
@@ -75,7 +76,7 @@ public class NoCachePolicy<T> extends BaseCachePolicy<T> {
                 try {
                     prepareRawCall();
                 } catch (Throwable throwable) {
-                    Response<T> error = Response.error(false, rawCall, null, throwable);
+                    Response<T> error = Response.error(false, HttpException.OTHER_ERROR(throwable));
                     mCallback.onError(error);
                     return;
                 }

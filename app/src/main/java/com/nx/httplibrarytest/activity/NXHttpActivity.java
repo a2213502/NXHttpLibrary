@@ -187,6 +187,8 @@ public class NXHttpActivity extends BaseActivity {
      */
     private void testJsonBack() {
 
+
+
         NXHttpManager.<LoginBean>post("http://app.nt.cn")
                 .params("token", "")
                 .params("mobile", "18514592015")
@@ -206,16 +208,10 @@ public class NXHttpActivity extends BaseActivity {
                         super.onStart(request);
                     }
 
-//                    @Override
-//                    public void onCacheSuccess(Response<LoginBean> response) {
-//                        OkLogger.d("onCacheSuccess:" + response.body().toString());
-//                        mTvResult.setText(response.body().toString());
-//
-//                        super.onCacheSuccess(response);
-//                    }
-
                     @Override
                     public void onSuccess(Response<LoginBean> response) {
+
+
                         OkLogger.d("onSuccess:" + response.body().toString());
                         mTvResult.setText(response.body().toString());
                     }

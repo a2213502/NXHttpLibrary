@@ -27,6 +27,7 @@ import com.nx.httplibrary.okhttp.cache.CacheMode;
 import com.nx.httplibrary.okhttp.cache.policy.CachePolicy;
 import com.nx.httplibrary.okhttp.callback.Callback;
 import com.nx.httplibrary.okhttp.convert.Converter;
+import com.nx.httplibrary.okhttp.exception.HttpException;
 import com.nx.httplibrary.okhttp.model.HttpHeaders;
 import com.nx.httplibrary.okhttp.model.HttpMethod;
 import com.nx.httplibrary.okhttp.model.HttpParams;
@@ -49,7 +50,7 @@ import okhttp3.Response;
  * @创建人：王成丞
  * @创建时间：2017/8/8 15:04
  */
-public abstract class Request<T, R extends Request > implements Serializable {
+public abstract class Request<T, R extends Request> implements Serializable {
     private static final long serialVersionUID = -7174118653689916252L;
 
     protected String url;
@@ -400,6 +401,15 @@ public abstract class Request<T, R extends Request > implements Serializable {
      * 普通调用，阻塞方法，同步请求执行
      */
     public Response execute() throws IOException {
+        boolean networkConnected = HttpUtils.isNetworkConnected(NXHttpManager.getInstance().getContext());
+
+        if (!networkConnected) {
+
+            //网络不可用
+            com.nx.httplibrary.okhttp.model.Response<T> error = com.nx.httplibrary.okhttp.model.Response.error(false, HttpException.NET_CONNECT_ERROR());
+            callback.onError(error);
+            return null;
+        }
         return getRawCall().execute();
     }
 
@@ -408,7 +418,14 @@ public abstract class Request<T, R extends Request > implements Serializable {
      */
     public void execute(Callback<T> callback) {
         HttpUtils.checkNotNull(callback, "callback == null");
+        boolean networkConnected = HttpUtils.isNetworkConnected(NXHttpManager.getInstance().getContext());
+        if (!networkConnected) {
 
+            //网络不可用
+            com.nx.httplibrary.okhttp.model.Response<T> error = com.nx.httplibrary.okhttp.model.Response.error(false, HttpException.NET_CONNECT_ERROR());
+            callback.onError(error);
+            return;
+        }
         this.callback = callback;
         Call<T> call = adapt();
         call.execute(callback);
