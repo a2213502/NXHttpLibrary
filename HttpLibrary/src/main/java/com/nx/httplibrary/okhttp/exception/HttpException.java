@@ -61,24 +61,24 @@ public class HttpException {
     }
 
     public static HttpException RESPONSE_CODE_500() {
-        return new HttpException(RESPONSE_CODE_500, "服务器内部错误!");
+        return new HttpException(RESPONSE_CODE_500, "服务器大招冷却中,请您稍后再试!");
     }
 
     public static HttpException NET_SOCKET_TIMEOUT() {
-        return new HttpException(NET_SOCKET_TIMEOUT, "网络传输失败，请检查网络!");
+        return new HttpException(NET_SOCKET_TIMEOUT, "数据太浪了！跑丢了。");
     }
 
     public static HttpException NET_CONNECT_ERROR() {
 
-        return new HttpException(NET_CONNECT_ERROR, "网络连接失败，请检查网络!");
+        return new HttpException(NET_CONNECT_ERROR, "网络开小差了,请您检查网络！");
     }
 
     public static HttpException RESPONSE_CODE_404() {
-        return new HttpException(BODY_NULL_ERROR, "网络访问地址有误!");
+        return new HttpException(BODY_NULL_ERROR, "您请求的数据即将到达战场！");
     }
 
     public static HttpException BODY_NULL_ERROR() {
-        return new HttpException(RESPONSE_CODE_404, "服务器返回数据错误!");
+        return new HttpException(RESPONSE_CODE_404, "大招放偏了，请稍后再试");
     }
 
     public static HttpException OTHER_ERROR(Throwable e) {
@@ -87,7 +87,7 @@ public class HttpException {
 
 
     public static HttpException CACHE_NULL_ERROR() {
-        return new HttpException(OTHER_ERROR, "缓存数据异常！");
+        return new HttpException(OTHER_ERROR, "没招了，请您联网再试！");
     }
 
     public ERRORTYPE getErrorType() {

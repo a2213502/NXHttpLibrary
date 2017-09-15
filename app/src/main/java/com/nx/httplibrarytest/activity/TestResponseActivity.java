@@ -10,11 +10,11 @@ import com.google.gson.Gson;
 import com.nx.commonlibrary.BaseActivity.BaseActivity;
 import com.nx.commonlibrary.Utils.StringUtil;
 import com.nx.httplibrary.NXHttpManager;
-import com.nx.httplibrary.deprecate.NXResponse;
 import com.nx.httplibrary.okhttp.model.Response;
 import com.nx.httplibrary.okhttp.utils.FileUtil;
 import com.nx.httplibrarytest.AppCallBack;
 import com.nx.httplibrarytest.R;
+import com.nx.httplibrarytest.bean.TestBean;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -91,23 +91,25 @@ public class TestResponseActivity extends BaseActivity {
         params.put("type", "");
         //注意javabean须实现 Serializable
 
-        NXHttpManager.<NXResponse>post("http://app.nt.cn")
+        NXHttpManager.<TestBean>post("http://app.nt.cn")
                 .params(params)
                 .tag("home.index")
                 //.cacheTime(CacheEntity.CACHE_NEVER_EXPIRE) 永久有效
-                .execute(new AppCallBack<NXResponse>(this) {
+                .execute(new AppCallBack<TestBean>(this) {
 
                     @Override
-                    public void onSuccess(Response<NXResponse> response) {
+                    public void onSuccess(Response<TestBean> response) {
 
                         boolean fromCache = response.isFromCache();
 
 
-                        NXResponse body = response.body();
+                        TestBean body = response.body();
 
 
                         mTvState.setText(body.toString());
                     }
+
+
                 });
 
 

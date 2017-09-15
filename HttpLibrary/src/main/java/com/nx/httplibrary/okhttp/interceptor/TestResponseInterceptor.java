@@ -58,7 +58,8 @@ public class TestResponseInterceptor implements Interceptor {
             LogUtil.d("tag", tag);
             if (map != null && map.containsKey(tag)) {
                 String responseJson = (String) map.get(tag);
-                return response.newBuilder().code(200).body(ResponseBody.create(null, responseJson)).build();
+                return response.newBuilder().code(200).body(ResponseBody.create(null, "12312321")).build();
+//                return response.newBuilder().code(200).body(ResponseBody.create(null, responseJson)).build();
 
             }
         } catch (Exception e) {
